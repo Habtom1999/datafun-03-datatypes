@@ -26,63 +26,33 @@ logger, logname = setup_logger(__file__)
 # define a variable with some univariant data
 # (one varabile, many readings)
 score_list = [
-    105,
-    129,
-    87,
-    86,
-    111,
-    111,
-    89,
-    81,
-    108,
-    92,
-    110,
-    100,
-    75,
-    105,
-    103,
-    109,
-    76,
-    119,
-    99,
+    65,
+    85,
     91,
-    103,
-    129,
-    106,
-    101,
+    78,
+    83,
+    78,
+    83,
+    92,
+    85,
     84,
-    111,
-    74,
+    80,
+    76,
+    83,
+    84,
+    85,
+    92,
     87,
-    86,
-    103,
-    103,
-    106,
-    86,
-    111,
-    75,
-    87,
-    102,
-    121,
-    111,
-    88,
-    89,
-    101,
-    106,
-    95,
-    103,
-    107,
-    101,
-    81,
-    109,
-    104,
+    80,
+    78,
+    69,
 ]
 
 # univariant time series data (one varabile over time)
 # typically, x (or time) is independent and
-# y is dependent on x (e.g. temperature vs hour of day)
+# y is dependent on x (e.g. number of days study vs mark)
 xtimes_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-yvalues_list = [2, 5, 8, 20, 21, 23, 24, 27, 30, 31, 31, 32]
+yvalues_list = [50, 55, 65, 74, 80, 83, 88, 92,94,95, 96, 99]
 
 # Define functions ........................................
 
@@ -216,10 +186,11 @@ def illustrate_list_methods():
      copy(): Return a shallow copy of the list.
 
      """
-
+    # Task 1
     # append an item to the end of the list
     list = [1, 2, 3]
     list.append(4)
+    print(list)
 
     # extend the list with another list
     list.extend([4, 5, 6])
@@ -235,7 +206,11 @@ def illustrate_list_methods():
 
     # Count how many times 111 appears in the list
     ct_of_111 = score_list.count(111)
-
+    # count how many times 85 appears in the score list
+    ct_of_85 = score_list.count(85)
+    for i in range(50, 100):
+     logger.info(f"(i) appears {score_list.count(i)} times in score_list")
+ 
     # Sort the list in ascending order using the sort() method
     asc_scores2 = score_list.sort()
 
@@ -250,16 +225,12 @@ def illustrate_list_methods():
     # The first item in a list is at index 0
     # Think of it as an offset from the beginning of the list
     first = new_scores.pop(0)
-    logger.info(
-        f"Popped the first (index=0): {first} and now, new_scores is: {new_scores}"
-    )
+    logger.info(f"Popped the first (index=0): {first} and now, new_scores is: {new_scores}")
 
     # Remove the last item from the new list
     # The last item in a list is at index -1
     last = new_scores.pop(-1)
-    logger.info(
-        f"Popped the last (index=-1): {last} and now, new_scores is: {new_scores}"
-    )
+    logger.info(f"Popped the last (index=-1): {last} and now, new_scores is: {new_scores}")
 
     # Remove the item at index 3 from the new list
     fourth = new_scores.pop(3)
@@ -278,12 +249,16 @@ def illustrate_list_transformations():
     # FILTER and MAP are critical tranformations in big data applications
 
     # Use the built-in function filter() anywhere you need to filter a list
-    # Filter the new list to only include scores greater than 100
+    # Filter the new list to only include scores greater than 84 and less than 80 
     # You could pass in a named function, but honestly this is easier
     # Say "KEEP x such that x > 100 is True" given score_list
     # Cast the result using square brackets to get back a list
-    scores_over_100 = [filter(lambda x: x > 100, score_list)]
-    logger.info(f"Scores over 100: {scores_over_100}")
+    scores_over_84 = list(filter(lambda x: x > 84, score_list))
+    logger.info(f"Scores over 84: {scores_over_84}")
+
+
+    scores_under_80 = list(filter(lambda x: x < 80, score_list))
+    logger.info(f"Scores under 80: {scores_under_80}")
 
     # Use the built-in function map() anywhere you need to transform a list
 
@@ -298,6 +273,19 @@ def illustrate_list_transformations():
     # remember to cast the result to a list (using square brackets)
     sqrt_scores = map(lambda x: math.sqrt(x), score_list)
     logger.info(f"Square root of scores: {sqrt_scores}")
+
+    # Map each element to its cubic root
+    # Say "Map x to the cubic root of x" given score_list
+    # remember to cast the result to a list (using square brackets)
+    cuberoot_scores = list(map(lambda x: math.pow(x, 1/3),score_list))
+    logger.info(f"cuberoot scores: {cuberoot_scores}")
+   
+    # finding the volume of cubic given side
+    # Map each element to its square root
+    # Say "Map x to x to the power of 3" given yvalues_list
+    # remember to cast the result to alist (using square brackets)
+    cubic_yvalues_list = list(map(lambda x: math.pow(x,3),yvalues_list))
+    logger.info(f"cubic yvalues:{cubic_yvalues_list}")
 
     # Map each element (radius) to its area
     radius_list = [1, 2, 3, 4, 5]
@@ -318,25 +306,36 @@ def illustrate_list_comprehensions():
     # They work like map and filter, but are more concise
     # They are the preferred "pythonic" way to do transformations
     # They are faster than map / filter - it's quite impressive when you master them!
-
     # With comprehensions, we start with what we WANT
     # Filter the new list to only include scores greater than 100
     # Say "KEEP x (for each x in score_list) IF  x > 100"
     # Cast the result to a list using square brackets
+    # scores more than 90 and less than 70 using if 
 
-    scores_over_100 = [x for x in score_list if x > 100]
-    logger.info("Scores over 100 (using list comprehensions!): {scores_over_100}")
+    score_over_90 = [x for x in score_list if x > 90]
+    logger.info(f"Score list over 90 (using list comprehensions!): {score_over_90}")
 
-    # Try again "keep x (for each x in score_list) IF  x < 42"
-    scores_under_42 = [x for x in score_list if x < 42]
-    logger.info("Scores under 42 (using list comprehensions!): {scores_under_42}")
+    # Try again "keep x (for each x in score_list) IF  x < 70"
+
+    score_under_70 = [x for x in score_list if x < 70]
+    logger.info(f"Score under 70 (using list comprehensions!): {score_under_70}")
 
     # Map each element to its square
     # Say "give me x squared (for each x in score_list)"
     # Cast the result to a list using square brackets
 
+
     doubled_scores = [x * 2 for x in score_list]
     logger.info("Doubled scores (using list comprehensions!): {doubled_scores}")
+    # Task six 
+    # Map each element to it cubic root 
+    # say " give me the cubic root ( for each x in score_list)"
+    # list the result to a list using square brackets
+    triple_score = [ x ** 3 for  x in score_list]
+    logger.info(f"triple scores (Using list compression): {triple_score}")
+
+    circumference_list =[2 * math.pi * r for r in score_list]
+    logger.info(f"Circumference of circles: {circumference_list}")
 
     # Map each element to its square root
     # Say "give me the square root of x (for each x in score_list)"
